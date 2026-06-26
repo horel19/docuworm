@@ -22,6 +22,7 @@ class ChatSession(BaseModel):
     id: str = Field(default_factory=lambda: uuid4().hex)
     pdf_name: str
     pdf_text: str
+    page_count: int = 0
     messages: list[ChatMessage] = Field(default_factory=list)
 
     def add_message(self, role: str, content: str) -> ChatMessage:
@@ -29,3 +30,7 @@ class ChatSession(BaseModel):
         msg = ChatMessage(role=role, content=content)
         self.messages.append(msg)
         return msg
+
+    def clear_messages(self) -> None:
+        """Remove all chat messages, keeping the PDF context."""
+        self.messages.clear()

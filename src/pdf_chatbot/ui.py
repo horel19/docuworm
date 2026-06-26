@@ -24,11 +24,23 @@ with st.sidebar:
         st.session_state.session is None
         or st.session_state.session.pdf_name != uploaded.name
     ):
-        pdf_text = extract_text(uploaded.read())
+        with st.spinner("Extracting text…"):
+            result = extract_text(uploaded.read())
         st.session_state.session = ChatSession(
-            pdf_name=uploaded.name, pdf_text=pdf_text
+            pdf_name=uploaded.name,
+            pdf_text=result.text,
+            page_count=result.page_count,
         )
-        st.success(f"Loaded **{uploaded.name}**")
+
+    if st.session_state.session is not None:
+        st.markdown(
+            f"📄 **{st.session_state.session.pdf_name}**  \n"
+            f"📑 {st.session_state.session.page_count} page"
+            f"{'s' if st.session_state.session.page_count != 1 else ''}"
+        )
+        if st.button("Clear chat"):
+            st.session_state.session.clear_messages()
+            st.rerun()
 
 # ---- Chat interface ----
 if st.session_state.session is None:
@@ -48,7 +60,12 @@ if prompt := st.chat_input("Ask a question about the document…"):
 
     with st.chat_message("assistant"):
         with st.spinner("Thinking…"):
-            answer = ask(session.pdf_text, prompt)
-        st.markdown(answer)
+            try:
+                answer = ask(session.pdf_text, prompt)
+            except Exception as exc:
+                answer = None
+                st.error(f"Gemini API error: {exc}")
 
-    session.add_message("assistant", answer)
+    if answer is not None:
+        st.markdown(answer)
+        session.add_message("assistant", answer)
