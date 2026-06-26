@@ -20,6 +20,9 @@ if "session" not in st.session_state:
 # ---- Sidebar: upload ----
 with st.sidebar:
     uploaded = st.file_uploader("Upload a PDF", type=["pdf"])
+    if not uploaded:
+        st.session_state.session = None
+
     if uploaded and (
         st.session_state.session is None
         or st.session_state.session.pdf_name != uploaded.name
