@@ -8,9 +8,9 @@ from pdf_chatbot.chat import ask
 from pdf_chatbot.ingestor import extract_text
 from pdf_chatbot.validators import ChatSession
 
-st.set_page_config(page_title="PDF Chatbot", page_icon="📄", layout="wide")
+st.set_page_config(page_title="DocuWorm", page_icon="🪱", layout="wide")
 
-st.title("PDF Chatbot")
+st.title("DocuWorm")
 st.caption("Upload a PDF and ask questions about its content — powered by Gemini")
 
 # ---- Initialise session state ----
